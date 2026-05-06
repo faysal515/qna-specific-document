@@ -1,0 +1,154 @@
+[
+  {
+    "id": "s1",
+    "processId": "p_account_opening_retail",
+    "type": "step",
+    "name": "Capture customer details",
+    "description": "Collect personal details, contact info, and declared purpose of account.",
+    "order": 1
+  },
+  {
+    "id": "s2",
+    "processId": "p_account_opening_retail",
+    "type": "step",
+    "name": "Perform KYC verification",
+    "description": "Verify identity documents and run sanctions/PEP screening.",
+    "order": 2
+  },
+  {
+    "id": "s3",
+    "processId": "p_account_opening_retail",
+    "type": "step",
+    "name": "Eligibility and product selection",
+    "description": "Check eligibility rules and select account product and add-ons.",
+    "order": 3
+  },
+  {
+    "id": "s4",
+    "processId": "p_account_opening_retail",
+    "type": "step",
+    "name": "Account creation and activation",
+    "description": "Create the account in core banking and activate digital channels.",
+    "order": 4
+  },
+  {
+    "id": "c1",
+    "processId": "p_account_opening_retail",
+    "type": "connector",
+    "fromStepId": "s2",
+    "toStepId": "s3",
+    "label": "KYC passed"
+  },
+  {
+    "id": "s10",
+    "processId": "p_card_dispute_chargeback",
+    "type": "step",
+    "name": "Intake dispute",
+    "description": "Capture transaction details, reason code, and customer statement.",
+    "order": 1
+  },
+  {
+    "id": "s11",
+    "processId": "p_card_dispute_chargeback",
+    "type": "step",
+    "name": "Collect evidence",
+    "description": "Collect receipts, delivery proof, and merchant communication where applicable.",
+    "order": 2
+  },
+  {
+    "id": "s12",
+    "processId": "p_card_dispute_chargeback",
+    "type": "step",
+    "name": "Submit chargeback",
+    "description": "Submit chargeback to scheme and notify customer of timelines.",
+    "order": 3
+  },
+  {
+    "id": "c10",
+    "processId": "p_card_dispute_chargeback",
+    "type": "connector",
+    "fromStepId": "s11",
+    "toStepId": "s12",
+    "label": "Evidence sufficient"
+  },
+  {
+    "id": "s20",
+    "processId": "p_loan_application_personal",
+    "type": "step",
+    "name": "Application intake",
+    "description": "Collect income, employment, requested amount/term, and consent.",
+    "order": 1
+  },
+  {
+    "id": "s21",
+    "processId": "p_loan_application_personal",
+    "type": "step",
+    "name": "Credit and affordability assessment",
+    "description": "Pull credit bureau report and run affordability rules.",
+    "order": 2
+  },
+  {
+    "id": "s22",
+    "processId": "p_loan_application_personal",
+    "type": "step",
+    "name": "Underwriting decision",
+    "description": "Approve/decline with conditions and pricing.",
+    "order": 3
+  },
+  {
+    "id": "s23",
+    "processId": "p_loan_application_personal",
+    "type": "step",
+    "name": "Disbursement",
+    "description": "Execute loan agreement and disburse funds.",
+    "order": 4
+  },
+  {
+    "id": "c20",
+    "processId": "p_loan_application_personal",
+    "type": "connector",
+    "fromStepId": "s22",
+    "toStepId": "s23",
+    "label": "Approved"
+  },
+  {
+    "id": "s30",
+    "processId": "p_account_closure_retail",
+    "type": "step",
+    "name": "Verify identity and account ownership",
+    "description": "Authenticate customer and verify authority to close the account.",
+    "order": 1
+  },
+  {
+    "id": "s31",
+    "processId": "p_account_closure_retail",
+    "type": "step",
+    "name": "Check balance and pending items",
+    "description": "Check balances, pending transactions, holds, and linked products.",
+    "order": 2
+  },
+  {
+    "id": "s32",
+    "processId": "p_account_closure_retail",
+    "type": "step",
+    "name": "Settle remaining obligations",
+    "description": "Settle fees, close linked services, and move remaining funds if needed.",
+    "order": 3
+  },
+  {
+    "id": "s33",
+    "processId": "p_account_closure_retail",
+    "type": "step",
+    "name": "Close account and confirm",
+    "description": "Close account in core banking and issue confirmation to customer.",
+    "order": 4
+  },
+  {
+    "id": "c30",
+    "processId": "p_account_closure_retail",
+    "type": "connector",
+    "fromStepId": "s31",
+    "toStepId": "s32",
+    "label": "No pending items"
+  }
+]

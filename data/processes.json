@@ -1,0 +1,26 @@
+[
+  {
+    "id": "p_account_opening_retail",
+    "name": "Retail Account Opening",
+    "description": "Open a new retail bank account including KYC, eligibility checks, and account activation.",
+    "keywords": ["account opening", "new account", "KYC", "retail"]
+  },
+  {
+    "id": "p_card_dispute_chargeback",
+    "name": "Card Dispute / Chargeback",
+    "description": "Handle card transaction disputes, evidence collection, and chargeback submission/decisioning.",
+    "keywords": ["chargeback", "dispute", "card", "fraud"]
+  },
+  {
+    "id": "p_loan_application_personal",
+    "name": "Personal Loan Application",
+    "description": "End-to-end personal loan application from intake to underwriting and disbursement.",
+    "keywords": ["loan", "personal loan", "underwriting", "credit"]
+  },
+  {
+    "id": "p_account_closure_retail",
+    "name": "Retail Account Closure",
+    "description": "Close a retail account including balance checks, pending transactions review, and final confirmation.",
+    "keywords": ["account closure", "close account", "retail"]
+  }
+]
