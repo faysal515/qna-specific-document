@@ -4,9 +4,7 @@ This repo is a minimal chat UI that shows that flow. Data source can be anything
 
 ## Demo
 
-<video src="public/demo.mp4" controls width="720">
-  <a href="public/demo.mp4">Watch the walkthrough</a>
-</video>
+[![Watch the walkthrough](public/demo-poster.jpg)](public/demo.mp4)
 
 ---
 
