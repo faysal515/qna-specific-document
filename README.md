@@ -1,60 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Interactive Chat with narrow search
 
-## What this demo does
+This repo is a minimal chat UI that shows that flow. Data source can be anything you like. Pdf, Docx or as complicated flow like ARIS.
 
-- Rich chat UX where the assistant can return **process candidates** as **action buttons**.
-- After you click a process, the assistant loads a **mock ARIS process graph** from local JSON and answers, while streaming **source metadata** (which file + which IDs were used).
+## Demo
 
-## Getting Started
+<video src="public/demo.mp4" controls width="720">
+  <a href="public/demo.mp4">Watch the walkthrough</a>
+</video>
 
-First, run the development server:
+---
+
+## Story
+
+A user asks something vague: *“How do I dispute a card charge?”*
+
+1. The model calls **`searchProcesses`** — narrow the catalog, don’t chunk the entire corpus.
+2. The UI shows a few **candidates**; the user picks one.
+3. The model calls **`getProcessGraph`** — load steps and connectors for *that* process only.
+4. The model answers from that graph. **Sources** list what was used; feedback attaches to grounded replies.
+
+Ambiguous questions stop before a wrong-document answer. Clear scope means the LLM step is mostly **context feeding**, not retrieval roulette.
+
+---
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-### Environment variables (Azure OpenAI)
-
-Copy the example env file and fill it in:
+`.env` in the project root (Azure OpenAI):
 
 ```bash
-cp .env.local.example .env.local
+AZURE_RESOURCE_NAME=...
+AZURE_API_KEY=...
+AZURE_OPENAI_DEPLOYMENT=...
 ```
 
-Required:
-- `AZURE_RESOURCE_NAME`
-- `AZURE_API_KEY`
-- `AZURE_OPENAI_DEPLOYMENT`
+Two terminals:
 
-### Mock data
+```bash
+npm run dev          # UI → http://localhost:3000
+npm run dev:server   # API → http://localhost:3001
+```
 
-Edit:
-- `data/processes.json`
-- `data/steps.json`
+Optional overrides: `NEXT_PUBLIC_CHAT_API_URL`, `NEXT_PUBLIC_CHAT_HISTORY_URL` (defaults point at `3001`).
 
-You can start editing the UI by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Try: *“open an account”*, *“dispute a card transaction”*, *“close my account”* — vague ones should ask you to pick a process first.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Where things live
 
-To learn more about Next.js, take a look at the following resources:
+| Piece | Path |
+| --- | --- |
+| Chat + candidates UI | `app/page.tsx`, `components/` |
+| Stream + tools | `server/index.ts` |
+| Catalog search + graph load | `server/db/aris.ts` |
+| Mock catalog (swap for real) | `data/processes.json`, `data/steps.json` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deeper wire-up: [ARCHITECTURE.md](./ARCHITECTURE.md).

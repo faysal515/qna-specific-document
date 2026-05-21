@@ -42,12 +42,7 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    credentials: true,
-  }),
-);
+app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 
 app.get("/health", (_req: Request, res: Response) => {
@@ -71,9 +66,7 @@ app.get("/api/conversations/:id", (req: Request, res: Response) => {
       metadata: d.metadata,
     })) as MyUIMessage[];
 
-    const feedbackDocs = await feedback
-      .find({ conversationId: id })
-      .toArray();
+    const feedbackDocs = await feedback.find({ conversationId: id }).toArray();
 
     const feedbackByMessageId: Record<
       string,
@@ -107,7 +100,9 @@ app.post("/api/feedback", async (req: Request, res: Response) => {
     const conversationId =
       typeof body.conversationId === "string" ? body.conversationId : null;
     const targetUiMessageId =
-      typeof body.targetUiMessageId === "string" ? body.targetUiMessageId : null;
+      typeof body.targetUiMessageId === "string"
+        ? body.targetUiMessageId
+        : null;
     const rating =
       body.rating === 1 || body.rating === -1 ? (body.rating as 1 | -1) : null;
     const comment =
@@ -154,7 +149,9 @@ app.post("/api/chat", async (req: Request, res: Response) => {
 
   console.log(`[chat] uiMessages=${uiMessages.length}`);
 
-  const modelMessages = await convertToModelMessages(uiMessages as MyUIMessage[]);
+  const modelMessages = await convertToModelMessages(
+    uiMessages as MyUIMessage[],
+  );
   console.log(`[chat] modelMessages=${modelMessages.length}`);
 
   let latestAnswerSources: AnswerSources | undefined;
@@ -266,16 +263,14 @@ app.post("/api/chat", async (req: Request, res: Response) => {
 
         await msgCol.deleteMany({ conversationId });
         await msgCol.insertMany(
-          messages
-            .filter(isChatMessage)
-            .map((m, idx) => ({
-              conversationId,
-              uiMessageId: m.id,
-              role: m.role,
-              parts: m.parts ?? [],
-              metadata: m.metadata,
-              createdAt: new Date(now.getTime() + idx),
-            })),
+          messages.filter(isChatMessage).map((m, idx) => ({
+            conversationId,
+            uiMessageId: m.id,
+            role: m.role,
+            parts: m.parts ?? [],
+            metadata: m.metadata,
+            createdAt: new Date(now.getTime() + idx),
+          })),
         );
       })().catch((err) => console.log("[chat] persist error", err));
     },
@@ -316,4 +311,3 @@ bootstrap().catch((err) => {
   console.error("[bootstrap] failed", err);
   process.exitCode = 1;
 });
-

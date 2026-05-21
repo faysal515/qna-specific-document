@@ -1,7 +1,10 @@
 "use client";
 
 import { ProcessCandidates } from "@/components/ProcessCandidates";
-import { MessageFeedback, type FeedbackValue } from "@/components/MessageFeedback";
+import {
+  MessageFeedback,
+  type FeedbackValue,
+} from "@/components/MessageFeedback";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import type { UIMessage } from "ai";
@@ -35,7 +38,8 @@ function isProcessSelectionUserMessage(m: MyUIMessage) {
   try {
     const parsed = JSON.parse(text) as { type?: string; processId?: string };
     return (
-      parsed?.type === "process_selection" && typeof parsed.processId === "string"
+      parsed?.type === "process_selection" &&
+      typeof parsed.processId === "string"
     );
   } catch {
     return false;
@@ -49,7 +53,10 @@ function getSelectedProcessIdFromUserMessage(m?: MyUIMessage) {
   if (!text.startsWith("{")) return null;
   try {
     const parsed = JSON.parse(text) as { type?: string; processId?: string };
-    if (parsed?.type === "process_selection" && typeof parsed.processId === "string") {
+    if (
+      parsed?.type === "process_selection" &&
+      typeof parsed.processId === "string"
+    ) {
       return parsed.processId;
     }
     return null;
@@ -102,7 +109,11 @@ export default function Home() {
         messages?: MyUIMessage[];
         feedbackByMessageId?: Record<string, FeedbackValue>;
       };
-      if (!cancelled && Array.isArray(json.messages) && json.messages.length > 0) {
+      if (
+        !cancelled &&
+        Array.isArray(json.messages) &&
+        json.messages.length > 0
+      ) {
         setMessages(json.messages);
       }
       if (!cancelled && json.feedbackByMessageId) {
@@ -130,7 +141,7 @@ export default function Home() {
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-4">
           <div className="flex flex-col">
             <div className="text-sm font-semibold tracking-tight">
-              ARIS Process Chat (Mock)
+              Process Q&A Interactive Chat
             </div>
             <div className="text-xs text-zinc-600">
               Streaming chat + action buttons + sources
@@ -148,61 +159,61 @@ export default function Home() {
             </div>
           ) : null}
 
-          {uiMessages.map((m, idx) => (
+          {uiMessages.map((m, idx) =>
             isProcessSelectionUserMessage(m) ? null : (
-            <div
-              key={m.id}
-              className={[
-                "rounded-xl border p-4",
-                m.role === "user"
-                  ? "ml-auto w-full max-w-[85%] border-zinc-200 bg-white"
-                  : "mr-auto w-full max-w-[85%] border-zinc-200 bg-zinc-50",
-              ].join(" ")}
-            >
-              <div className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
-                {m.role}
-              </div>
+              <div
+                key={m.id}
+                className={[
+                  "rounded-xl border p-4",
+                  m.role === "user"
+                    ? "ml-auto w-full max-w-[85%] border-zinc-200 bg-white"
+                    : "mr-auto w-full max-w-[85%] border-zinc-200 bg-zinc-50",
+                ].join(" ")}
+              >
+                <div className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                  {m.role}
+                </div>
 
-              <div className="whitespace-pre-wrap text-sm leading-6">
-                {getText(m)}
-              </div>
+                <div className="whitespace-pre-wrap text-sm leading-6">
+                  {getText(m)}
+                </div>
 
-              {Array.isArray(m.parts) ? (
-                <div className="mt-3">
-                  <ProcessCandidates
-                    parts={m.parts}
-                    initialSelectedId={getSelectedProcessIdFromUserMessage(
-                      uiMessages[idx + 1],
-                    )}
-                    onSelect={({ processId }) =>
-                      sendMessage({
-                        text: JSON.stringify({
-                          type: "process_selection",
-                          processId,
-                        }),
-                      })
+                {Array.isArray(m.parts) ? (
+                  <div className="mt-3">
+                    <ProcessCandidates
+                      parts={m.parts}
+                      initialSelectedId={getSelectedProcessIdFromUserMessage(
+                        uiMessages[idx + 1],
+                      )}
+                      onSelect={({ processId }) =>
+                        sendMessage({
+                          text: JSON.stringify({
+                            type: "process_selection",
+                            processId,
+                          }),
+                        })
+                      }
+                    />
+                  </div>
+                ) : null}
+
+                {m.role === "assistant" && m.metadata?.answerSources ? (
+                  <MessageFeedback
+                    conversationId={conversationId}
+                    targetUiMessageId={m.id}
+                    apiBase={apiOrigin}
+                    initialFeedback={feedbackByMessageId[m.id] ?? null}
+                    onSaved={(value) =>
+                      setFeedbackByMessageId((prev) => ({
+                        ...prev,
+                        [m.id]: value,
+                      }))
                     }
                   />
-                </div>
-              ) : null}
-
-              {m.role === "assistant" && m.metadata?.answerSources ? (
-                <MessageFeedback
-                  conversationId={conversationId}
-                  targetUiMessageId={m.id}
-                  apiBase={apiOrigin}
-                  initialFeedback={feedbackByMessageId[m.id] ?? null}
-                  onSaved={(value) =>
-                    setFeedbackByMessageId((prev) => ({
-                      ...prev,
-                      [m.id]: value,
-                    }))
-                  }
-                />
-              ) : null}
-            </div>
-            )
-          ))}
+                ) : null}
+              </div>
+            ),
+          )}
         </div>
 
         {latestSources ? (
